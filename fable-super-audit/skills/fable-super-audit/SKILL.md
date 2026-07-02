@@ -34,11 +34,15 @@ This tiering is the point of the skill. If you are running in a non-premium sess
 
 ## Phase 0 — Orientation (delegate to cheap subagents)
 
-### 0a. Explore the codebase
+### 0a. Explore the codebase and gather candidate findings
 
-Dispatch read-only **Explore** subagents with `model: opus` (or `sonnet`). For a large repo, run several in parallel, one per subsystem, then synthesize. Each should report: directory structure, project type and stack, entry points, core modules and the main data/control flow, package/build/CI config, apparent maturity (prototype / internal tool / production service / library), the conventions already in use, and the project's **destructive surfaces** (migrations, deploy/seed scripts, anything touching prod or secrets) so later phases know what to never touch.
+Dispatch read-only **Explore** subagents with `model: opus` (or `sonnet`), each given the two reference files (`references/audit-rubric.md` and `references/ai-codegen-antipatterns.md`). Assign each a subsystem, and **split further when a subsystem is large**: keep each agent's territory to a reviewable size (very roughly 5–10k lines) rather than handing a 30k-line crate to one agent, or that territory gets only a shallow pass. Run them in parallel, then synthesize.
 
-Synthesize their reports into the **Repo Map**: purpose, stack, an architecture sketch, key directories with one-line descriptions, and anything surprising.
+Ask each subagent for two things about its territory:
+- **A map piece:** directory structure, entry points, core modules and the main data/control flow, apparent maturity (prototype / internal tool / production service / library), the conventions in use, and the project's **destructive surfaces** (migrations, deploy/seed scripts, anything touching prod or secrets) so later phases know what to never touch.
+- **Candidate findings:** applying the two rubrics, the suspected issues in its territory, each with dimension, `file:line`, a one-line consequence, and a provisional severity. These are leads for you to verify, not final findings: the subagent flags, you confirm. It should skip dimensions its territory plainly lacks (no database code means no injection findings).
+
+Synthesize the map pieces into the **Repo Map** (purpose, stack, an architecture sketch, key directories with one-line descriptions, anything surprising), and pool the candidate findings for Phase 1 to verify.
 
 ### 0b. Tailor the rubric to this project
 
@@ -50,9 +54,14 @@ Ask it to return a **project-tailored, ordered audit checklist**: which checks a
 
 ## Phase 1 — Audit (you, the premium agent)
 
-Work the tailored checklist against the code. For every finding record: (a) what you found, (b) where (`file:line`), (c) why it matters (a concrete consequence, not a vague principle), (d) whether it is a fact or a judgment, and (e) severity: **Critical / High / Medium / Low / Informational**.
+You now hold three things: the Repo Map, the tailored checklist, and the pooled candidate findings from the exploration subagents. **Verify and curate; do not rediscover from scratch.** That is how your premium budget goes to judgment instead of first-pass reading.
 
-Apply both lenses: the general audit and, especially for AI-built code, the anti-patterns lens. Consult `references/audit-rubric.md` and `references/ai-codegen-antipatterns.md` for the full check definitions and the severity table. Also list what the repo does well.
+- **Confirm each candidate finding line-level.** Read the cited code and promote it, adjust its severity, or reject it. A candidate is a lead until you have seen the evidence yourself; never pass through a subagent's claim you have not checked.
+- **Drop candidates** in dimensions the tailoring pruned as inapplicable.
+- **Fill the gaps** the subagents missed, going deep on the core 20% and on anything security- or correctness-critical.
+- **Add cross-cutting findings** that need whole-repo context: duplication across modules, pattern drift between subsystems, contract mismatches at inter-module seams. These rarely surface from a single-territory subagent.
+
+For every finding you keep, record: (a) what you found, (b) where (`file:line`), (c) why it matters (a concrete consequence, not a vague principle), (d) whether it is a fact or a judgment, and (e) severity: **Critical / High / Medium / Low / Informational**. Apply both lenses, the general audit and (especially for AI-built code) the anti-patterns lens; consult `references/audit-rubric.md` and `references/ai-codegen-antipatterns.md` for the full check definitions and the severity table. Also list what the repo does well.
 
 **Output — "Audit Report":** findings grouped by dimension, sorted by severity, plus a Strengths section.
 
@@ -85,6 +94,7 @@ A single document, in this order:
 4. **Improvement Strategy**
 5. **Task Plan** (milestones + task table + quick wins)
 6. **Open Questions** (what you need a human to decide: product intent, deprecation candidates, performance targets)
+7. **Method note** (one short paragraph): which subsystems were delegated to exploration subagents, confirmation that the High/Medium findings were verified line-level in this primary pass, and that the report is the audit's only write. This provenance is what lets a reader trust the audit and reproduce its coverage.
 
 Present the Executive Summary inline, and offer to write the full document to a markdown file (default `AUDIT.md` at the repo root, or a path the user prefers). That report is the only write this skill performs in the target repo; keep internal prep artifacts (the Repo Map, the tailored checklist) in the session scratchpad, not the repo.
 
