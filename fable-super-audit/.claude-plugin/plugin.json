@@ -1,0 +1,8 @@
+{
+  "name": "fable-super-audit",
+  "description": "Comprehensive, rubric-driven, whole-repository code audit that ends in a prioritized improvement plan with an executive health grade.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Madison Rickert"
+  }
+}
