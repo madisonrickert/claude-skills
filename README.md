@@ -18,6 +18,16 @@ Comprehensive, rubric-driven, whole-repository code audit that ends in a priorit
 
 See [`fable-super-audit/skills/fable-super-audit/SKILL.md`](fable-super-audit/skills/fable-super-audit/SKILL.md) for details.
 
+### jev-permission-gate
+
+A mod that puts [TypeSafe's Jev](https://docs.typesafe.ai/) in front of Claude Code's auto mode classifier. Jev allows clearly requested, low-risk tool calls itself, at about twice the speed of the built-in classifier, and hands everything it isn't sure about to the built-in classifier. Needs Claude Code 2.1.287 or later with mods enabled, and a TypeSafe API key.
+
+```
+/plugin install jev-permission-gate@claude-skills
+```
+
+The plugin lives in its own repo: see [madisonrickert/jev-permission-gate](https://github.com/madisonrickert/jev-permission-gate) for results, settings, and privacy notes.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).

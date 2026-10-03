@@ -10,6 +10,15 @@
       "name": "fable-super-audit",
       "source": "./fable-super-audit",
       "description": "Comprehensive, rubric-driven, whole-repository code audit that ends in a prioritized improvement plan with an executive health grade."
+    },
+    {
+      "name": "jev-permission-gate",
+      "source": {
+        "source": "github",
+        "repo": "madisonrickert/jev-permission-gate",
+        "ref": "jev-permission-gate--v0.1.1"
+      },
+      "description": "Puts TypeSafe's Jev in front of Claude Code's auto mode classifier: 2x faster on the tool calls it decides, and anything it isn't sure about goes to the built-in classifier."
     }
   ]
 }
