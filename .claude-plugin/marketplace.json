@@ -16,7 +16,7 @@
       "source": {
         "source": "github",
         "repo": "madisonrickert/jev-permission-gate",
-        "ref": "jev-permission-gate--v0.1.2"
+        "ref": "jev-permission-gate--v0.2.0"
       },
       "description": "Puts TypeSafe's Jev in front of Claude Code's auto mode classifier: 2x faster on the tool calls it decides, and anything it isn't sure about goes to the built-in classifier."
     }
